@@ -1,147 +1,101 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { todoList } from './todoList';
 import './App.css';
 
-const todos = [
-    {id: 1, name: 'Go to the supermarket', complete: false},
-    {id: 2, name: 'Call Alice', complete: false},
-    {id: 3, name: 'Ask Alice to call Bob', complete: false},
-    {id: 4, name: 'Do the dishes', complete: false},
-    {id: 5, name: 'Change car tyres', complete: false}
-];
+import Header from './components/Header/Header';
+import TodoItems from './components/TodoItems/TodoItems';
+import Bar from './components/Bar/Bar';
 
-class App extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            newTodoName: '',
-            todos: todos
-        };
+const App = () => {
+
+    const [newTodoName, setNewTodoName] = useState('');
+    const [todos, setTodos] = useState(todoList);
+    const [completed, setCompleted] = useState(0);
+
+    // Get percentage of completed tasks
+    const getCompleted = () => {
+        const completedTasks = todos.filter(todo => todo.complete);
+        const percentage = Math.round((completedTasks.length / todos.length) * 100);
+        if (percentage) {
+            setCompleted(percentage);
+        } else {
+            setCompleted(0);
+        }
     }
 
-    generateNewId() {
-        return this.state.todos.length + 1;
+    // Generate ID for the new item
+    const generateNewId = () => {
+        if (todos.length > 0) {
+            return todos[todos.length - 1].id + 1;
+        } else {
+            return 1;
+        }
     }
 
-    onSubmit(event) {
+    // Add new item
+    const onSubmit = (event) => {
         event.preventDefault();
+        if (newTodoName.length < 1) return;
 
-        var newTodos = this.state.todos.slice();
+        let newTodos = [...todos];
         newTodos.push({
-            id: this.generateNewId(),
-            name: this.state.newTodoName,
+            id: generateNewId(),
+            name: newTodoName,
             complete: false
         });
 
-        this.setState({todos: newTodos, newTodoName: ''});
+        setTodos(newTodos);
+        setNewTodoName('');
     }
 
-    onClick(id) {
-        var todoItems = this.state.todos.slice();
-        for (let i = 0; i < this.state.todos.length; i++) {
+    // Mark item as complete/incomplete
+    const onClick = (id) => {
+        const todoItems = [...todos];
+        for (let i = 0; i < todos.length; i++) {
             if (todoItems[i].id === id) {
-                var newComplete = !todoItems[i].complete;
-                todoItems[i].complete = newComplete;
+                todoItems[i].complete = !todoItems[i].complete;
             }
         }
 
-        this.setState({
-            todos: todoItems
-        });
+        setTodos(todoItems);
     }
 
-    onChange(event) {
-        this.setState({newTodoName: event.target.value});
+    const onChange = (event) => {
+        setNewTodoName(event.target.value);
     }
-    onRemoveClick(id) {
-        //implement this logic
+
+    // Remove item
+    const onRemoveClick = (id) => {
+        const todoItems = [...todos];
+        const index = todoItems.findIndex(todo => todo.id === id);
+        todoItems.splice(index, 1);
+        setTodos(todoItems);
         console.log('Remove Item!');
     }
 
-    render() {
-        return (
-            <div className="">
-                {this.todoItems()}
+    useEffect(() => {
+        getCompleted();
+    }, [todos]);
+
+    return (
+        <div className="App">
+            <div className="App__content">
+                <Header
+                    completed={completed}
+                />
+                <TodoItems
+                    todos={todos}
+                    onClick={onClick}
+                    onRemoveClick={onRemoveClick}
+                />
                 <Bar
-                    onSubmit={this.onSubmit.bind(this)}
-                    newTodoName={this.state.newTodoName}
-                    onInputChange={this.onChange.bind(this)}
+                    onSubmit={onSubmit}
+                    newTodoName={newTodoName}
+                    onInputChange={onChange}
                 />
             </div>
-        );
-    }
-
-    todoItems = () => {
-        var retVal = [];
-
-        for (let i = 0; i < this.state.todos.length; i++) {
-            var todo = this.state.todos[i];
-            retVal.push(
-                <Hello
-                    key={todo.id}
-                    todo={todo}
-                    onClick={this.onClick.bind(this)}
-                    onRemoveClick={this.onRemoveClick.bind(this)}
-                />
-            );
-        }
-        return retVal;
-    };
-}
-
-class Hello extends React.Component {
-    render() {
-        var color;
-        var text;
-
-        if (this.props.todo.complete === true) {
-            color = 'lightgreen';
-            text = 'Complete';
-        } else {
-            color = 'pink';
-            text = 'Incomplete';
-        }
-
-        return (
-            <div className="wrapper" style={{backgroundColor: color}}>
-                <h3>{this.props.todo.name}</h3>
-                <button
-                    className="btn"
-                    onClick={() => this.props.onClick(this.props.todo.id)}>
-                    {text}
-                </button>
-                <button
-                    className="btn"
-                    onClick={() =>
-                        this.props.onRemoveClick(this.props.todo.id)
-                    }>
-                    Remove from list
-                </button>
-            </div>
-        );
-    }
-}
-
-class Bar extends React.Component {
-    render() {
-        return (
-            <form
-                className="wrapper"
-                style={{'grid-template-columns': '7fr 2fr'}}
-                onSubmit={this.props.onSubmit}>
-                <input
-                    placeholder="Add new todo"
-                    value={this.props.newTodoName}
-                    onChange={this.props.onInputChange}
-                />
-                <button
-                    className="btn btn-success"
-                    type="submit"
-                    value="Submit">
-                    Submit
-                </button>
-            </form>
-        );
-    }
-}
+        </div>
+    );
+};
 
 export default App;

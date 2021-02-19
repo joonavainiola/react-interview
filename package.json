@@ -5,6 +5,7 @@
   "dependencies": {
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-icons": "^4.2.0",
     "react-scripts": "3.4.1"
   },
   "scripts": {
@@ -21,5 +22,10 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.11.9",
+    "@testing-library/react": "^11.2.5",
+    "react-test-renderer": "^17.0.1"
+  }
 }

@@ -1,0 +1,51 @@
+.bar {
+    min-height: 100px;
+    max-height: 100px;
+    width: 100%;
+    padding: 25px;
+    display: flex;
+    align-items: center;
+}
+
+.bar__wrapper {
+    width: 100%;
+    display: flex;
+    border-radius: 23px;
+    background-color: white;
+}
+
+.bar__wrapper input {
+    width: 100%;
+    border: none;
+    border-radius: 20px 0 0 20px;
+    padding: 13px 16px;
+    font-size: 17px;
+    color: #838383;
+}
+
+.bar__wrapper input::placeholder {
+    color: #cccccc;
+}
+
+.bar__wrapper input:focus {
+    outline: none;
+}
+
+.bar__wrapper button {
+    width: 42px;
+    margin: 4px;
+    border: none;
+    border-radius: 50%;
+    background-color: #f4b34a;
+    color: white;
+    cursor: pointer;
+}
+
+.bar__wrapper button:focus {
+    outline: none;
+}
+
+.add {
+    margin-top: 3px;
+    margin-left: 1.9px;
+}
